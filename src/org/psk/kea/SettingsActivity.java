@@ -1,5 +1,7 @@
 package org.psk.kea;
 
+import org.psk.kea.weather.WeatherFacade;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -9,6 +11,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 /**
  * @author Pete
@@ -19,10 +22,10 @@ import android.widget.BaseAdapter;
 public class SettingsActivity extends PreferenceActivity implements
 		OnPreferenceChangeListener {
 	
-	private static final int NUM_SETTINGS = 5;
+	private static final int NUM_MSG_ELEMENT_OPTIONS = 5;
 	private PreferenceScreen _prefScreen;
 	private SharedPreferences _prefs;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		if (android.os.Build.VERSION.SDK_INT >= 6) {
@@ -50,6 +53,12 @@ public class SettingsActivity extends PreferenceActivity implements
 	protected void onStart() {
 		super.onStart();
 		populate();
+		if (ResourceUtil.isFirstRun(this)) {
+			final String help = "When you're done, go Back to the main screen"
+				+ " to save your settings";
+			Toast.makeText(getApplicationContext(), help, Toast.LENGTH_LONG)
+					.show();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -86,46 +95,28 @@ public class SettingsActivity extends PreferenceActivity implements
 		setETP_TitlesFromPrefs("etpSubject");
 		setETP_TitleFromPrefN("etpHerEmail", 1);
 
-		setETPTempTitleFromPref("Cold");
-		setETPTempTitleFromPref("Hot");
+		setPrefTitleFromPref("etpWeatherCold", WeatherFacade.DEFAULT_COLD.toString(), "Cold");
+		setPrefTitleFromPref("etpWeatherHot", WeatherFacade.DEFAULT_HOT.toString(), "Hot");
 
-		setETPCityTitleFromPref();
-		/*setETP_Title("etpWeatherCold");
-		setETP_Title("etpWeatherHot");
-		setETP_Title("etpWeatherTextCold");
-		setETP_Title("etpWeatherTextHot");
-		setETP_Title("etpWeatherCity");*/
-	}
-
-	private void setETPCityTitleFromPref() {
-		final String key = "etpWeatherCity";
-		final String city = _prefs.getString(key, "City, Country");
-
-		EditTextPreference etp = (EditTextPreference) _prefScreen
-				.findPreference(key);
-
-		etp.setTitle("Location "+ "\t[" + city + "]");
-
-		// this only needs to be called once but it's OK to call it more than once
-		// and requires less code.
-		etp.setOnPreferenceChangeListener(this);		
+		setPrefTitleFromPref("etpWeatherCity", "City, Country", "Location");
 	}
 
 	/**
-	 * @param threshold - "Hot" or "Cold" postfix. Corresponds to the two preference keys.
+	 * @param key - prefs key
+	 * @param defVal - default to be used if pref is not found
+	 * @param prefix - to be prepended to title
 	 */
-	private void setETPTempTitleFromPref(final String threshold) {
-		final String key = "etpWeather" + threshold;
-		final String val = _prefs.getString(key, "");
+	private void setPrefTitleFromPref(final String key, final String defVal,
+			final String prefix) {
+		
+		final String val = _prefs.getString(key, defVal);
 
-		EditTextPreference etp = (EditTextPreference) _prefScreen
-				.findPreference(key);
-
-		etp.setTitle(threshold + "\t[" + val + "F]");
+		Preference p = (Preference)_prefScreen.findPreference(key);
+		p.setTitle(prefix + "\t[" + val + "]");
 
 		// this only needs to be called once but it's OK to call it more than once
 		// and requires less code.
-		etp.setOnPreferenceChangeListener(this);
+		p.setOnPreferenceChangeListener(this);		
 	}
 
 	/**
@@ -137,6 +128,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		populateScreenSummary("etpSignIn1", "SignInScreen");
 		populateScreenSummary("etpSubject1", "SubjectScreen");
 		populateScreenSummary("etpSignOff1", "SignOffScreen");
+		populateScreenSummary("etpReminderStartTime", "ReminderScreen");
 	}
 
 	/**
@@ -152,9 +144,11 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	/**
 	 * @param prefKeyPrefix - e.g. etpSignOff
+	 * For the list-like prefs e.g. sign-in, sign-off, this method sets all
+	 * their titles to the content of the pref
 	 */
 	private void setETP_TitlesFromPrefs(final String prefKeyPrefix) {
-		for (int i = 1; i < NUM_SETTINGS; i++) {
+		for (int i = 1; i < NUM_MSG_ELEMENT_OPTIONS; i++) {
 			setETP_TitleFromPrefN(prefKeyPrefix, i);
 		}
 	}

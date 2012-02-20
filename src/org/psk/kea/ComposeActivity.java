@@ -17,7 +17,6 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 
 /**
- * 
  * @author Pete
  * Screen for choosing a subject line, greeting and sign off combination. 
  * These are pulled from shared preferences. When a message is composed

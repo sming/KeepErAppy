@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="Settings" android:theme="@style/CustomTheme">
+	<PreferenceScreen android:key="GeneralScreen"
+		android:title="General" android:summary="App settings">
+		<CheckBoxPreference android:name="sfx_toggle"
+			android:layout_width="match_parent" android:layout_height="match_parent"
+			android:defaultValue="true" android:title="Sound Effects" android:key="cbpSfxToggle" />
+	</PreferenceScreen>
 	<PreferenceScreen android:key="EmailScreen"
 		android:title="Her Email Address" android:summary="Her Email Address"
 		android:theme="@style/CustomTheme">
@@ -61,12 +67,10 @@
 			android:key="etpSignOff4" />
 	</PreferenceScreen>
 	<PreferenceScreen android:key="WeatherScreen"
-		android:title="Weather Suggestions" android:summary="Temperatures are in F"
-		android:textSize="20sp">
+		android:title="Weather Suggestions" android:summary="Temperatures are in F">
 		<CheckBoxPreference android:name="weather_toggle"
 			android:layout_width="match_parent" android:layout_height="match_parent"
-			android:defaultValue="true" android:title="Enabled"
-			android:key="etpWeatherToggle" />
+			android:defaultValue="true" android:title="Enabled" android:key="cbpWeatherToggle" />
 		<EditTextPreference android:name="weather_city"
 			android:id="@+id/weather_city" android:layout_width="match_parent"
 			android:layout_height="match_parent" android:defaultValue=""
@@ -86,5 +90,50 @@
 			android:layout_width="match_parent" android:layout_height="match_parent"
 			android:defaultValue="Hi love,\nwrap up warm today - it is COLD!\nxxx"
 			android:title="Cold weather message" android:key="etpWeatherTextCold" />
+	</PreferenceScreen>
+	<PreferenceScreen android:key="ReminderScreen"
+		android:title="Reminders" android:id="@+id/reminder_screen"
+		android:summary="when and how often you'd like to be reminded">
+		<CheckBoxPreference android:name="reminder_toggle"
+			android:id="@+id/reminder_toggle"
+			android:layout_width="match_parent" android:layout_height="match_parent"
+			android:defaultValue="true" android:title="Enabled" android:key="cbpReminderToggle" />
+		<org.psk.kea.widget.TimePreference
+			android:id="@+id/reminder_earliest" android:key="@string/reminder_earliest"
+			android:showDefault="true" android:defaultValue="13:00"
+			android:summary="the earliest you'd like to be reminded"
+			android:title="@string/preferences_earliest_time" />
+		<org.psk.kea.widget.TimePreference
+			android:id="@+id/reminder_latest" android:key="@string/reminder_latest"
+			android:showDefault="true" android:defaultValue="17:00"
+			android:summary="the latest you'd like to be reminded" android:title="@string/preferences_latest_time" />
+		<CheckBoxPreference android:name="monday_toggle"
+			android:id="@+id/monday_toggle"	android:title="Mon" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpMonToggle" />
+		<CheckBoxPreference android:name="tuesday_toggle"
+			android:id="@+id/tuesday_toggle"	android:title="Tue" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpTuesToggle" />
+		<CheckBoxPreference android:name="wednesday_toggle"
+			android:id="@+id/wednesday_toggle"	android:title="Wed" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpWedToggle" />
+		<CheckBoxPreference android:name="thuday_toggle"
+			android:id="@+id/thursday_toggle"	android:title="Thu" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpThuToggle" />
+		<CheckBoxPreference android:name="friday_toggle"
+			android:id="@+id/friday_toggle"	android:title="Fri" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpFriToggle" />
+		<CheckBoxPreference android:name="satday_toggle"
+			android:id="@+id/saturday_toggle"	android:title="Sat" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpSatToggle" />
+		<CheckBoxPreference android:name="sunday_toggle"
+			android:id="@+id/sunday_toggle"	android:title="Sun" android:layout_width="match_parent"
+			android:layout_height="match_parent" android:defaultValue="true"
+			android:key="cbpSunToggle" />
 	</PreferenceScreen>
 </PreferenceScreen>

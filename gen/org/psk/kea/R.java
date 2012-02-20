@@ -10,6 +10,7 @@ package org.psk.kea;
 public final class R {
     public static final class array {
         public static final int baked_array=0x7f060000;
+        public static final int repeat_freq=0x7f060001;
     }
     public static final class attr {
     }
@@ -36,7 +37,7 @@ public final class R {
         public static final int baked_messages_button=0x7f090018;
         public static final int baked_scrollview=0x7f090004;
         public static final int baked_type_spinner=0x7f090003;
-        public static final int big_beer=0x7f090026;
+        public static final int big_beer=0x7f090033;
         public static final int compose_button=0x7f090016;
         public static final int compose_compose_button=0x7f090011;
         public static final int compose_subject_label=0x7f090008;
@@ -44,27 +45,40 @@ public final class R {
         public static final int email_text=0x7f090001;
         public static final int frameLayout1=0x7f090019;
         public static final int frameLayout2=0x7f09001c;
+        public static final int frameLayout3=0x7f09001e;
+        public static final int friday_toggle=0x7f09002f;
         public static final int help_button=0x7f09001b;
         public static final int help_text=0x7f090013;
-        public static final int her_email1=0x7f090020;
+        public static final int her_email1=0x7f090022;
         public static final int imageView1=0x7f090006;
         public static final int linearLayout1=0x7f090012;
         public static final int main_header=0x7f090014;
+        public static final int monday_toggle=0x7f09002b;
         public static final int recents_button=0x7f090015;
-        public static final int recents_layout=0x7f09001f;
-        public static final int recents_scrollview=0x7f09001e;
+        public static final int recents_layout=0x7f090021;
+        public static final int recents_scrollview=0x7f090020;
+        public static final int reminder_earliest=0x7f090029;
+        public static final int reminder_info=0x7f09001f;
+        public static final int reminder_latest=0x7f09002a;
+        public static final int reminder_screen=0x7f090027;
+        public static final int reminder_toggle=0x7f090028;
+        public static final int saturday_toggle=0x7f090030;
         public static final int settings_button=0x7f090017;
         public static final int signInLayout=0x7f09000a;
         public static final int signInSpinner=0x7f09000c;
         public static final int signOffLayout=0x7f09000d;
-        public static final int sign_in_pref1=0x7f090022;
+        public static final int sign_in_pref1=0x7f090024;
         public static final int sign_off_spinner=0x7f09000f;
         public static final int subjectSpinner=0x7f090009;
         public static final int subject_layout=0x7f090007;
-        public static final int subject_pref1=0x7f090021;
-        public static final int title=0x7f090025;
-        public static final int weather_city=0x7f090023;
-        public static final int weather_cold=0x7f090024;
+        public static final int subject_pref1=0x7f090023;
+        public static final int sunday_toggle=0x7f090031;
+        public static final int thursday_toggle=0x7f09002e;
+        public static final int title=0x7f090032;
+        public static final int tuesday_toggle=0x7f09002c;
+        public static final int weather_city=0x7f090025;
+        public static final int weather_cold=0x7f090026;
+        public static final int wednesday_toggle=0x7f09002d;
     }
     public static final class layout {
         public static final int about=0x7f030000;
@@ -78,16 +92,7 @@ public final class R {
         public static final int splash=0x7f030008;
     }
     public static final class raw {
-        public static final int a=0x7f040000;
-        public static final int d=0x7f040001;
-        public static final int down=0x7f040002;
-        public static final int enter=0x7f040003;
-        public static final int f=0x7f040004;
-        public static final int kisses=0x7f040005;
-        public static final int left=0x7f040006;
-        public static final int right=0x7f040007;
-        public static final int s=0x7f040008;
-        public static final int up=0x7f040009;
+        public static final int kisses=0x7f040000;
     }
     public static final class string {
         public static final int PREF_NOT_PRESENT=0x7f05000b;
@@ -95,23 +100,34 @@ public final class R {
         public static final int about_text=0x7f050005;
         public static final int app_name=0x7f050001;
         public static final int baked_button_label=0x7f050003;
+        public static final int blank_string=0x7f050020;
         public static final int compose_button_label=0x7f05000d;
         public static final int compose_go_button_label=0x7f050011;
         public static final int compose_sign_in_label=0x7f05000f;
         public static final int compose_sign_off_label=0x7f050010;
         public static final int compose_subject_label=0x7f05000e;
-        public static final int create_shortcut_cb_label=0x7f050014;
+        public static final int create_shortcut_cb_label=0x7f050018;
         public static final int email_address=0x7f050006;
         public static final int help_label=0x7f050012;
-        public static final int help_text=0x7f050013;
+        public static final int help_text=0x7f05001f;
         public static final int main_header=0x7f050002;
+        public static final int originator=0x7f05001c;
+        public static final int preferences_earliest_time=0x7f05001a;
+        public static final int preferences_latest_time=0x7f05001b;
         public static final int recents_label=0x7f05000a;
+        public static final int reminder_earliest=0x7f05001d;
+        public static final int reminder_latest=0x7f05001e;
+        public static final int scheduler_service_connected=0x7f050016;
+        public static final int scheduler_service_disconnected=0x7f050017;
+        public static final int scheduler_service_label=0x7f050015;
+        public static final int scheduler_service_started=0x7f050013;
+        public static final int scheduler_service_stopped=0x7f050014;
         public static final int set_preferences=0x7f050008;
         public static final int settings_button=0x7f050007;
         public static final int sign_in_pref1=0x7f05000c;
         public static final int title=0x7f050000;
         public static final int tmp=0x7f050009;
-        public static final int weather_button_label=0x7f050015;
+        public static final int weather_button_label=0x7f050019;
     }
     public static final class style {
         public static final int CustomTheme=0x7f080000;

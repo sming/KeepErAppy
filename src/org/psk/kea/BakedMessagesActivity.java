@@ -1,7 +1,5 @@
 package org.psk.kea;
 
-import org.psk.kea.R;
-
 import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -13,27 +11,23 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
- * 
  * @author Pete
  * POTENTIALLY TO BE MOTHBALLED/TRASHED
+ * The idea of this activity is to present the user with example sweet messages
+ * for the user to select from or to use as inspiration. However this has become
+ * less important relative to the ability to compose their own messages.
  */
 public class BakedMessagesActivity extends ListActivity implements
 		OnItemClickListener {
-
-	public BakedMessagesActivity() {
-		// TODO Auto-generated constructor stub
-	}
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		String[] baked = getResources().getStringArray(R.array.baked_array);
-		
+		String[] baked = getResources().getStringArray(R.array.baked_array);		
 		String[] pBaked = personalizeBaked(baked, "KEA_SIGN_IN", "Hi Luvva!");
 		String[] ppBaked = personalizeBaked(pBaked, "KEA_SIGN_OFF", "Chicka XXX");
 
@@ -44,6 +38,14 @@ public class BakedMessagesActivity extends ListActivity implements
 		lv.setOnItemClickListener(this);
 	}
 
+	/**
+	 * Take the pre-baked message and replace the KEA_SIGN_* placeholders with
+	 * the user's preferred names.
+	 * @param baked
+	 * @param reg
+	 * @param rep
+	 * @return
+	 */
 	private String[] personalizeBaked(final String[] baked, final String reg, final String rep) {
 		String[] res = new String[baked.length];
 		
@@ -54,14 +56,17 @@ public class BakedMessagesActivity extends ListActivity implements
 		return res;
 	}
 
+	/* (non-Javadoc)
+	 * @see android.widget.AdapterView.OnItemClickListener#onItemClick(android.widget.AdapterView, android.view.View, int, long)
+	 * Slurp out the user's selection, grab the necessary prefs and compose an
+	 * email from them. 
+	 */
 	@Override
 	public void onItemClick(android.widget.AdapterView<?> parent, View view,
 			int position, long id) {
-		// When clicked, show a toast with the TextView text
-		final CharSequence body = ((TextView) view).getText();
-		Toast.makeText(getApplicationContext(), body, Toast.LENGTH_SHORT).show();
 
-		Log.d("PSK", body.toString());
+		final CharSequence body = ((TextView) view).getText();
+		Log.d("kea", body.toString());
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		final String eAddr = prefs.getString("etpHerEmail1", "");

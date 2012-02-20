@@ -1,5 +1,6 @@
 package org.psk.kea;
 
+import org.psk.kea.reminder.ReminderBuilder;
 import org.psk.kea.weather.WeatherFacade;
 
 import android.app.Activity;
@@ -7,57 +8,116 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * @author Pete
- * The main activity of the application. Acts as controller. 
+ * @author Pete The main activity of the application. Acts as controller.
+ * From here all the app's functions are commenced: message composition,
+ * preferences, viewing help, recent compositions and the about box.
  */
-public class KeepErAppyActivity extends Activity implements OnClickListener {
+public class KeepErAppyActivity extends Activity implements
+		View.OnClickListener {
 
-	private SharedPreferences _prefs;
-	private Resources _res;
+	static final String REMINDER_ENABLED = "REMINDER_ENABLED";
+	
+	private static final int SETTINGS_REQUEST_CODE = 771548739; // random number
 	private WeatherFacade _weather;
+	private ReminderBuilder _reminder;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onNewIntent(android.content.Intent)
+	 * 
+	 * OK so the user has (potentially after some time) selected the KEA
+	 * Notification and KEA has been brought to front. Now we need to schedule
+	 * the next reminder.
+	 */
+	@Override
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		Log.i("kea", "onNewIntent");
+
+		final String originator = intent.getStringExtra(getString(R.string.originator));
+		if ((originator != null) && originator.equals("Notifier")) {
+			// don't notify user. mandatory roll to next date since the reminder's
+			// notification has just been clicked - we do not want another reminder
+			// sent today.
+			setReminder(false, true);
+		}
+	}
+
+	private void updateReminderTray() {
+		String infoText = _reminder.getInfoText();
+		TextView tv = (TextView)findViewById(R.id.reminder_info);
+		tv.setText(infoText);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.i("kea", "onDestroy()");
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 * Perform app-wide initialization of weather and reminder subsystems.
+	 * Dis/En/able the Recents button, depending on existence of prefs. 
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		// short kiss-kiss sfx
-		Music.play(this, R.raw.kisses);
+		Log.i("kea", "onCreate()");
 
-		_prefs = PreferenceManager
-				.getDefaultSharedPreferences(getBaseContext());
+		runOnceOnly();
 
-		_res = getResources();
-
-		hookAsListener();
-
-		performFirstTimeConfig();
+		doPostInstallConfig();
 
 		enableRecentsButton();
 
-		initializeWeather();
-
+		initializeWeather(); // weather may have changed since app was last
+								// launched
 	}
 
 	/**
-	 * runs in a new thread so that UI does not lock-up should the weather
-	 * take some time to retrieve. 
+	 * code that should run once during the lifetime of this object
 	 */
-	private void initializeWeather() {
+	private void runOnceOnly() {
+
+		if (_weather != null)
+			return;
+		
+		Log.i("kea","runOnceOnly()");
+
+		// short kiss-kiss sfx
+		Music.play(this, R.raw.kisses);
+
 		_weather = new WeatherFacade(this);
 		
+		_reminder = new ReminderBuilder(this);
+
+		// don't notify user, no mandatory roll to next date
+		setReminder(false, true);
+		
+		hookAsListenerOfButtons();
+	}
+
+	/**
+	 * runs in a new thread so that UI does not lock-up should the weather take
+	 * some time to retrieve.
+	 */
+	private void initializeWeather() {
+
 		Runnable run = new Runnable() {
 			public void run() {
-				_weather.fetchCurrent();		
+				_weather.fetchCurrent();
 				_weather.prompt();
 			}
 		};
@@ -69,6 +129,8 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		Log.i("kea", "onPause()");
+
 		Music.stop(this);
 		_weather.pause();
 	}
@@ -76,15 +138,21 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.i("kea", "onResume()");
+
 		_weather.resume();
 		// no music to resume - it's just a short SFX
 	}
 
 	/**
-	 * enable the Recents button only if there have been previous emails composed.
+	 * enable the Recents button only if there have been previous emails
+	 * composed.
 	 */
 	private void enableRecentsButton() {
-		final String s = new String(_prefs.getString(
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getBaseContext());
+
+		final String s = new String(prefs.getString(
 				RecentsUtil.SUBJECT_RECENT_PREF + 1, ""));
 		findViewById(R.id.recents_button).setEnabled(
 				!(s.equals("") || s.equals(" ...")));
@@ -94,7 +162,7 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 	 * if this is the first time the app has run on this device since
 	 * installation, prompt the user to enter some settings.
 	 */
-	private void performFirstTimeConfig() {
+	private void doPostInstallConfig() {
 		if (ResourceUtil.isFirstRun(this)) {
 			final String help = "Welcome to Keep Er Appy. "
 					+ "Take a moment to fill in a few bits of "
@@ -107,22 +175,23 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onWindowFocusChanged(boolean)
-	 * When we return to the screen, the Recents button may need to be 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onWindowFocusChanged(boolean) When we return to
+	 * the screen, the Recents button may need to be
 	 */
 	@Override
 	public void onWindowFocusChanged(boolean hasFocus) {
 		super.onWindowFocusChanged(hasFocus);
-		if (hasFocus) {
+		if (hasFocus)
 			enableRecentsButton();
-		}
 	}
 
 	/**
 	 * this activity wants to listen to all its own UI widgets.
 	 */
-	private void hookAsListener() {
+	private void hookAsListenerOfButtons() {
 		findViewById(R.id.baked_messages_button).setOnClickListener(this);
 		findViewById(R.id.compose_button).setOnClickListener(this);
 		findViewById(R.id.about_button).setOnClickListener(this);
@@ -131,7 +200,9 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 		findViewById(R.id.help_button).setOnClickListener(this);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.view.View.OnClickListener#onClick(android.view.View)
 	 * determine what was clicked and fire off the appropriate action.
 	 */
@@ -142,32 +213,32 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.compose_button: {
 			intent = new Intent(this, ComposeActivity.class);
-		}
 			break;
+		}
 		case R.id.baked_messages_button: {
 			intent = new Intent(this, BakedMessagesActivity.class);
-		}
 			break;
+		}
 		case R.id.about_button: {
 			intent = new Intent(this, AboutActivity.class);
-		}
 			break;
+		}
 		case R.id.settings_button: {
 			intent = new Intent(this, SettingsActivity.class);
-		}
+			startActivityForResult(intent, SETTINGS_REQUEST_CODE);
+			intent = null; // so that we don't call startActivity(intent) below
 			break;
+		}
 		case R.id.recents_button: {
 			intent = new Intent(this, RecentsActivity.class);
-		}
 			break;
+		}
 		case R.id.help_button: {
-			// showDialog(/* id */1);
 			intent = new Intent(this, HelpActivity.class);
-		}
 			break;
+		}
 		default:
-			Log.d("PSK", "Unexpected view was clicked");
-
+			Log.d("kea", "Unexpected view was clicked");
 		};
 
 		if (intent != null)
@@ -175,13 +246,33 @@ public class KeepErAppyActivity extends Activity implements OnClickListener {
 	}
 
 	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateDialog(int)
-	 * The Help dialog is the only dialog that could have been created.
+	 * @see android.app.Activity#onActivityResult
+	 * The user's finished with the prefs screen - handle their input
+	 */ 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		assert (requestCode == SETTINGS_REQUEST_CODE);
+		// do notify user, no mandatory roll to next date
+		setReminder(true, false);
+	}
+
+	private void setReminder(boolean notifyUser, boolean doRoll) {
+		_reminder.setReminder(notifyUser, doRoll); 
+		updateReminderTray();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreateDialog(int) The Help dialog is the only
+	 * dialog that could have been created.
 	 */
 	@Override
 	protected Dialog onCreateDialog(int id) {
+		Log.v("kea", "onCreateDialog()");
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(_res.getString(R.string.help_text))
+		builder.setMessage(getResources().getString(R.string.help_text))
 				.setCancelable(false).setPositiveButton("OK", null);
 		AlertDialog alert = builder.create();
 

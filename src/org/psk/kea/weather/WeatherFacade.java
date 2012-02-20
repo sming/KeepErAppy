@@ -30,18 +30,14 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 
 	private Activity _act;	// to get at Activity goodies
 	
-	private WeatherFacade _this;	// workaround for anonymous inner class Runnable
 	
 	private WeatherCondition _condition;	// hot, cold or OK?
 
-	private static final Integer DEFAULT_COLD = new Integer(30);
-	private static final Integer DEFAULT_HOT = new Integer(85);
+	public static final Integer DEFAULT_COLD = new Integer(30);
+	public static final Integer DEFAULT_HOT = new Integer(85);
 
 	private LocationManager _mgr;
-	private StringBuilder _output = new StringBuilder(500);
 	private String _best;
-
-	private Location _location;
 
 	private SharedPreferences _prefs;
 
@@ -51,6 +47,9 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 		return _prefs.getString(pref, "");
 	}
 
+	/**
+	 * @param activity - main KEA activity, required for access to Context stuff
+	 */
 	public WeatherFacade(Activity activity) {
 		_act = activity;
 		_mgr = (LocationManager) _act
@@ -61,8 +60,6 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 
 		_prefs = PreferenceManager.getDefaultSharedPreferences(_act
 				.getBaseContext());
-
-		_this = this;
 	}
 
 	public void resume() {
@@ -78,9 +75,12 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 	}
 
 	public void onLocationChanged(Location location) {
-		_location = location;
+		//_location = location;
 	}
 
+	/**
+	 * get the current conditions
+	 */
 	public void fetchCurrent() {
 		final String city = _prefs.getString("etpWeatherCity", "");
 
@@ -115,25 +115,29 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 			_current = ws.getWeatherCurrentCondition();
 
 		} catch (Exception e) {
-			Log.e("PSK", "WeatherQueryError", e);
+			Log.e("kea", "WeatherQueryError", e);
 			showDialog("Couldn't get current conditions for " + city);
 		}
 	}
 
+	/**
+	 * ask the user if they'd like to send their significant other 
+	 * a considerate extreme-weather message.
+	 */
 	public void prompt() {
 
-		boolean enabled = _prefs.getBoolean("etpWeatherToggle", false);
+		boolean enabled = _prefs.getBoolean("cbpWeatherToggle", false);
 
 		if (_current == null || !enabled) {
-			return;
+			return;	// don't ask the user if the pref is disabled
 		}
 
 		final String cold = _prefs.getString("etpWeatherCold", DEFAULT_COLD.toString());
 		final String hot = _prefs.getString("etpWeatherHot", DEFAULT_HOT.toString());
 
 		final int temp = _current.getTempFahrenheit();
-		final int coldF = getThreshold(cold, DEFAULT_COLD);
-		final int hotF = getThreshold(hot, DEFAULT_HOT);
+		final int coldF = strToInt(cold, DEFAULT_COLD);
+		final int hotF = strToInt(hot, DEFAULT_HOT);
 		
 		if (temp <= coldF) {
 			_condition = WeatherCondition.COLD;
@@ -148,10 +152,11 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 	}
 
 	/**
-	 * @param threshold
-	 * @return
+	 * @param threshold - string temp to parse to int
+	 * @param def - default, if the string cannot be converted 
+	 * @return - int value of threshold input
 	 */
-	private int getThreshold(final String threshold, final Integer def) {
+	static public int strToInt(final String threshold, final Integer def) {
 		int retVal = def;
 		
 		try {
@@ -163,16 +168,16 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 	}
 
 	/**
-	 * @param text
+	 * @param text - message to ask user
 	 */
 	private void showDialog(final String text) {
 		Runnable runner = new Runnable() {
 			public void run() {
 				AlertDialog.Builder builder = new AlertDialog.Builder(_act);
-				
-				// TODO: address _this hack
+
 				builder.setMessage(text).setCancelable(false)
-						.setPositiveButton("OK", _this).setNegativeButton("No", _this);
+						.setPositiveButton("Yes", WeatherFacade.this)
+						.setNegativeButton("No", WeatherFacade.this);
 				AlertDialog alert = builder.create();
 				alert.show();
 			}
@@ -182,24 +187,26 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 		v.post(runner);
 	}
 
+	/* (non-Javadoc)
+	 * @see android.content.DialogInterface.OnClickListener#onClick(android.content.DialogInterface, int)
+	 */
 	@Override
-	public void onClick(DialogInterface arg0, int arg1) {
-		if (arg1 == DialogInterface.BUTTON_POSITIVE) {
-			//
+	public void onClick(DialogInterface dlg, int button) {
+		if (button == DialogInterface.BUTTON_POSITIVE) {
 			Sender sender = new Sender(_act);
 			
 			final String text = _prefs.getString(
 					isCold() ? "etpWeatherTextCold" : "etpWeatherTextHot", "");
 
-
-			/*final boolean success = */
 			sender.send(new HappyEmail(_prefs.getString("etpHerEmail1", ""),
 					isCold() ? "Brrr!" : "Phew!",
 					text));
-
 		}
 	}
 	
+	/**
+	 * @return - is it cold out?
+	 */
 	private boolean isCold() {
 		return _condition.equals(WeatherCondition.COLD);
 	}

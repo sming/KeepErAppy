@@ -3,6 +3,7 @@ package org.psk.kea;
 /**
  * @author Pete
  * An implementation of the "parameter object" idiom i.e. a group of related fields.
+ * Encapsulates the key elements of an email - subject, addressee, body
  */
 public class HappyEmail {
 	private String _to;

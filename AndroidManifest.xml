@@ -14,7 +14,7 @@
 	<application android:label="@string/app_name" android:icon="@drawable/beer"
 		android:description="@string/title" android:enabled="true"
 		android:killAfterRestore="true" android:allowTaskReparenting="false"
-		android:theme="@style/CustomTheme" android:debuggable="true">
+		android:theme="@style/CustomTheme" android:debuggable="false">
 		<activity android:label="@string/app_name" android:name="KeepErAppyActivity"
 			android:launchMode="singleTask">
 		</activity>

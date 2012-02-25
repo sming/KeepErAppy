@@ -4,8 +4,8 @@
 	<PreferenceScreen android:key="GeneralScreen"
 		android:title="General" android:summary="App settings">
 		<CheckBoxPreference android:name="sfx_toggle"
-			android:layout_width="match_parent" android:layout_height="match_parent"
-			android:defaultValue="true" android:title="Sound Effects" android:key="cbpSfxToggle" />
+	android:layout_width="match_parent" android:layout_height="match_parent"
+	android:defaultValue="true" android:title="Sound Effects" android:key="@string/fx_toggle" />
 	</PreferenceScreen>
 	<PreferenceScreen android:key="EmailScreen"
 		android:title="Her Email Address" android:summary="Her Email Address"

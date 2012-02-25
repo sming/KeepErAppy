@@ -66,7 +66,7 @@ public class BakedMessagesActivity extends ListActivity implements
 			int position, long id) {
 
 		final CharSequence body = ((TextView) view).getText();
-		Log.d("kea", body.toString());
+		Log.d(Util.TAG, body.toString());
 
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		final String eAddr = prefs.getString("etpHerEmail1", "");

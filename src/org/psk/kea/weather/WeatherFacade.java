@@ -2,6 +2,7 @@ package org.psk.kea.weather;
 
 import org.psk.kea.HappyEmail;
 import org.psk.kea.Sender;
+import org.psk.kea.Util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -115,7 +116,7 @@ public class WeatherFacade implements LocationListener, OnClickListener {
 			_current = ws.getWeatherCurrentCondition();
 
 		} catch (Exception e) {
-			Log.e("kea", "WeatherQueryError", e);
+			Log.e(Util.TAG, "WeatherQueryError", e);
 			showDialog("Couldn't get current conditions for " + city);
 		}
 	}

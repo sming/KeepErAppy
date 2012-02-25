@@ -108,6 +108,7 @@ public final class R {
         public static final int compose_subject_label=0x7f05000e;
         public static final int create_shortcut_cb_label=0x7f050018;
         public static final int email_address=0x7f050006;
+        public static final int fx_toggle=0x7f050021;
         public static final int help_label=0x7f050012;
         public static final int help_text=0x7f05001f;
         public static final int main_header=0x7f050002;

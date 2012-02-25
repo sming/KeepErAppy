@@ -73,7 +73,7 @@ public class ComposeActivity extends Activity implements OnClickListener {
 	private ArrayList<String> getPrefList(final String keyPrefix) {
 		ArrayList<String> pl = new ArrayList<String>();
 
-		for (int i = 1; i < RecentsUtil.NUM_RECENTS; i++) {
+		for (int i = 1; i < Util.NUM_RECENTS; i++) {
 			final String keyN = keyPrefix + (new Integer(i)).toString();
 			pl.add(_prefs.getString(keyN, ""));
 		}
@@ -150,7 +150,7 @@ public class ComposeActivity extends Activity implements OnClickListener {
 		// "checkout" the preferences for editing.
 		Editor ed = _prefs.edit();
 
-		for (int i = RecentsUtil.NUM_RECENTS - 1; i > 0; i--) {
+		for (int i = Util.NUM_RECENTS - 1; i > 0; i--) {
 			demoteRecent(i, ed);
 		}
 
@@ -168,8 +168,8 @@ public class ComposeActivity extends Activity implements OnClickListener {
 		final String eAddr = _prefs.getString("etpHerEmail1", "");
 
 		HappyEmail he = new HappyEmail(eAddr, 
-				_prefs.getString(RecentsUtil.SUBJECT_RECENT_PREF + i, ""), 
-				_prefs.getString(RecentsUtil.BODY_RECENT_PREF + i, ""));
+				_prefs.getString(Util.SUBJECT_RECENT_PREF + i, ""), 
+				_prefs.getString(Util.BODY_RECENT_PREF + i, ""));
 		
 		putRecent(ed, he, i + 1);
 	}
@@ -181,8 +181,8 @@ public class ComposeActivity extends Activity implements OnClickListener {
 	 * @param i - the i'th recent keys to obtain for storing. 
 	 */
 	private void putRecent(Editor ed, HappyEmail he, final int i) {
-		final String subTargetKey = RecentsUtil.SUBJECT_RECENT_PREF + i;
-		final String siTargetKey = RecentsUtil.BODY_RECENT_PREF + i;
+		final String subTargetKey = Util.SUBJECT_RECENT_PREF + i;
+		final String siTargetKey = Util.BODY_RECENT_PREF + i;
 
 		ed.putString(subTargetKey, he.getSubject());
 		ed.putString(siTargetKey, he.getBody());

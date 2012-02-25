@@ -69,4 +69,6 @@ Tapping it will create a new pre-populated email, ready for sending.\n\n</p>
 </string>
 	
 <string name="blank_string"></string>
+	
+<string name="fx_toggle">ecbSfxToggle</string>
 </resources>

@@ -18,7 +18,7 @@ import android.widget.ListView;
 public class RecentsActivity extends ListActivity implements
 		OnItemClickListener {
 
-	private String[] _recents = new String[RecentsUtil.NUM_RECENTS];
+	private String[] _recents = new String[Util.NUM_RECENTS];
 	private SharedPreferences _prefs;
 
 	/** Called when the activity is first created. */
@@ -49,7 +49,7 @@ public class RecentsActivity extends ListActivity implements
 		appendBodyText(position, sb);
 
 		sender.send(new HappyEmail(_prefs.getString("etpHerEmail1", ""), 
-				_prefs.getString(RecentsUtil.SUBJECT_RECENT_PREF+(position+1), ""), 
+				_prefs.getString(Util.SUBJECT_RECENT_PREF+(position+1), ""), 
 				sb.toString()));
 	}
 
@@ -68,9 +68,9 @@ public class RecentsActivity extends ListActivity implements
 	 */
 	private void buildRecentsArray() {
 
-		for (int i = 0; i < RecentsUtil.NUM_RECENTS; i++) {
+		for (int i = 0; i < Util.NUM_RECENTS; i++) {
 			StringBuilder sb = new StringBuilder(_prefs.getString(
-					RecentsUtil.SUBJECT_RECENT_PREF + (i + 1), ""));
+					Util.SUBJECT_RECENT_PREF + (i + 1), ""));
 
 			sb.append("\t");
 			appendBodyText(i, sb);
@@ -84,6 +84,6 @@ public class RecentsActivity extends ListActivity implements
 	 * @param sb - the StringBuilder to append it to
 	 */
 	private void appendBodyText(int i, StringBuilder sb/*, boolean inflate*/) {
-		sb.append(_prefs.getString(RecentsUtil.BODY_RECENT_PREF + (i + 1), ""));
+		sb.append(_prefs.getString(Util.BODY_RECENT_PREF + (i + 1), ""));
 	}
 }

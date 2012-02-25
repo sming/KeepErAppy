@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Random;
 
 import org.psk.kea.R;
+import org.psk.kea.Util;
 import org.psk.kea.widget.TimePreference;
 
 import android.app.Activity;
@@ -84,7 +85,7 @@ public class ReminderBuilder {
 							PendingIntent.FLAG_UPDATE_CURRENT);
 			am.set(AlarmManager.RTC_WAKEUP, _cal.getTimeInMillis(), pending);
 
-			Log.i("kea", getInfoText());
+			Log.i(Util.TAG, getInfoText());
 		}
 	}
 
@@ -214,7 +215,7 @@ public class ReminderBuilder {
 		}
 
 		if (!found) {
-			Log.v("kea", "No days checked, defaulting to tomorrow");
+			Log.v(Util.TAG, "No days checked, defaulting to tomorrow");
 			cal.setTime(new Date());
 			cal.roll(Calendar.DATE, true);
 		}

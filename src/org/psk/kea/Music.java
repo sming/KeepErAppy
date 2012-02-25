@@ -28,7 +28,7 @@ public class Music {
 	public static boolean enabled(Context context) {
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		return prefs.getBoolean("ecbSfxToggle", true);
+		return prefs.getBoolean(context.getString(R.string.fx_toggle), true);
 	}
 
 	/** Stop the music - note that it may have been enabled, started and then

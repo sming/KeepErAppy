@@ -41,7 +41,7 @@ public class KeepErAppyActivity extends Activity implements
 	@Override
 	public void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		Log.i("kea", "onNewIntent");
+		Log.i(Util.TAG, "onNewIntent");
 
 		final String originator = intent.getStringExtra(getString(R.string.originator));
 		if ((originator != null) && originator.equals("Notifier")) {
@@ -61,7 +61,7 @@ public class KeepErAppyActivity extends Activity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		Log.i("kea", "onDestroy()");
+		Log.i(Util.TAG, "onDestroy()");
 	}
 
 	/* (non-Javadoc)
@@ -74,7 +74,7 @@ public class KeepErAppyActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		Log.i("kea", "onCreate()");
+		Log.i(Util.TAG, "onCreate()");
 
 		runOnceOnly();
 
@@ -94,7 +94,7 @@ public class KeepErAppyActivity extends Activity implements
 		if (_weather != null)
 			return;
 		
-		Log.i("kea","runOnceOnly()");
+		Log.i(Util.TAG,"runOnceOnly()");
 
 		// short kiss-kiss sfx
 		Music.play(this, R.raw.kisses);
@@ -129,7 +129,7 @@ public class KeepErAppyActivity extends Activity implements
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.i("kea", "onPause()");
+		Log.i(Util.TAG, "onPause()");
 
 		Music.stop(this);
 		_weather.pause();
@@ -138,7 +138,7 @@ public class KeepErAppyActivity extends Activity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.i("kea", "onResume()");
+		Log.i(Util.TAG, "onResume()");
 
 		_weather.resume();
 		// no music to resume - it's just a short SFX
@@ -153,7 +153,7 @@ public class KeepErAppyActivity extends Activity implements
 				.getDefaultSharedPreferences(getBaseContext());
 
 		final String s = new String(prefs.getString(
-				RecentsUtil.SUBJECT_RECENT_PREF + 1, ""));
+				Util.SUBJECT_RECENT_PREF + 1, ""));
 		findViewById(R.id.recents_button).setEnabled(
 				!(s.equals("") || s.equals(" ...")));
 	}
@@ -238,7 +238,7 @@ public class KeepErAppyActivity extends Activity implements
 			break;
 		}
 		default:
-			Log.d("kea", "Unexpected view was clicked");
+			Log.d(Util.TAG, "Unexpected view was clicked");
 		};
 
 		if (intent != null)
@@ -269,7 +269,7 @@ public class KeepErAppyActivity extends Activity implements
 	 */
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		Log.v("kea", "onCreateDialog()");
+		Log.v(Util.TAG, "onCreateDialog()");
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(getResources().getString(R.string.help_text))
